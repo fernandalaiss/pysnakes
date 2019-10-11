@@ -7,9 +7,10 @@ lock = threading.Lock()
 def thread_cliente(conn):
     while True:
         #receber informações do jogador
+        print("while da thread")
         data = conn.recv(1024) 
         #se não mandar mais informações o jogador morreu e deve ser exibida tela de game over ou de ganhador
-        if not data: 
+        if str(data.decode('ascii')) == "out": 
             print('GameOver ou Parabéns')
             #jogador desbloqueando com o lock
             lock.release() 
@@ -20,9 +21,10 @@ def thread_cliente(conn):
   
         # send back reversed string to client // mandar info do jogo pro cliente
         conn.send(data) 
-  
+    print("saiu do while da thread")
     #conexão finalizada com o cliente pois o mesmo morreu ou ganhou
     conn.close()
+    print("fechou a conexão")
 
 def Main():
     #host posteriormente pode ter valor "", significa que pode se conectar com todas as interfaces IPV4 disponíveis
@@ -41,7 +43,7 @@ def Main():
         #fazendo a interface encontrar conexões na porta
         s.listen()
 
-        #criando conexões até que os clientes encerrarem
+        #criando conexões até que os clientes encerrem
         while True:
             #estabelecendo conexão com um cliente
             conn, addr = s.accept()
@@ -51,6 +53,7 @@ def Main():
 
             #iniciando uma nova thread para controlar o cliente
             start_new_thread(thread_cliente, (conn,))
+            print("saiu da thread")
             
 
 if __name__ == "__main__":

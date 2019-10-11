@@ -20,6 +20,7 @@ def Main():
         if continua == 's':
             continue
         else:
+            s.sendall(("out").encode('ascii'))
             break
     s.close()
 
